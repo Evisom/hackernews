@@ -2,8 +2,13 @@ import React from 'react'
 
 export default class Article extends React.Component {
 
+    constructor(props) {
+        super(props)
+    }
+
     componentDidMount() {
-        console.log(this.props.match.params.id)
+        const articleId = window.location.href.split('/').slice(-1)[0]
+        console.log(articleId)
     }
 
     render() {
