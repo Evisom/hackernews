@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const Article = styled.div`
@@ -15,7 +15,6 @@ const Article = styled.div`
             margin-bottom: 10px;
         }
         .info {
-            /* width: 100%; */
             display: flex;
             flex-direction: row;
             justify-content: space-between;
@@ -31,34 +30,33 @@ export default function AricleCard(props) {
         by: '',
         score: ''
     })
+    useEffect(() => {
+        fetch('https://hacker-news.firebaseio.com/v0/item/' + props.id + '.json')
+            .then(response => response.json()).then(data => {
+                setArticleData(data)
+                console.log(data)
+            })
+    }, [])
 
-    fetch('https://hacker-news.firebaseio.com/v0/item/'+props.id+'.json')
-    .then(response=>response.json()).then(data=>{  
-        setArticleData(data)
-    })
-
-    return(
+    return (
         <Article>
-            <a href={'article/' + props.id}>
-                <div className='title'>
-                    {articleData.title}
-                </div>
-                <div className='url'>
-                    {articleData.url}
-                </div>
-                <div className='info'>
-                    <div>
-                    {articleData.by}
-                    </div>
-                    <div>
-                    {articleData.score}
-                    </div>
-                    <div>
-                    {articleData.time}
-                    </div>
-                    
-                </div>
+            <a className='title' href={'article/' + props.id}>
+                {articleData.title}
             </a>
+            <a className='url' href={articleData.url}>
+                {articleData.url}
+            </a>
+            <div className='info'>
+                <div>
+                    {articleData.by}
+                </div>
+                <div>
+                    {articleData.score}
+                </div>
+                <div>
+                    {new Date(articleData.time * 1000).toDateString()}
+                </div>
+            </div>
         </Article>
     )
 }
