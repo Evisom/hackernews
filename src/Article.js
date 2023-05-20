@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch, connect } from 'react-redux'
-import { updateComments, addComment, expandComment } from './store/commentsSlice'
+import React, { useEffect, useState } from 'react'
+
 import Comment from './components/Comment'
 import ArticleCard from './components/ArticleCard'
 
@@ -10,77 +9,45 @@ import Button from 'react-bootstrap/Button';
 
 export default function Article() {
 
-    let comments = useSelector((state) => state.comments.comments)
-    let expandedComments = useSelector((state) => state.comments.expandedComments)
-    const dispatch = useDispatch()
-
+    const [comments, addComments] = useState([])
     const articleId = window.location.href.split('/').slice(-1)[0]
 
     function update() {
-        console.log(comments, expandedComments)
+        loadComments(articleId)
     }
 
-    function loadComment(id, callback = () => { }) {
+    function loadComments(id, callback = () => { }) {
         fetch('https://hacker-news.firebaseio.com/v0/item/' + id + '.json')
             .then(response => response.json()).then(data => {
                 if (Object.keys(data).includes('kids')) {
-                    dispatch(addComment({
-                        id: id,
-                        kids: data.kids
-                    }))
-                    callback(data)
-
+                    addComments(data.kids)
                 }
             })
     }
 
     useEffect(() => {
-
-        loadComment(articleId, (data) => {
-            dispatch(expandComment({
-                id: articleId
-            }))
-
-            data.kids.forEach(element => {
-                loadComment(element, (d) => {
-                    d.kids.forEach(e => {
-                        loadComment(e)
-                    })
-                })
-
-            });
-        })
-
+        loadComments(articleId)
+        setInterval(() => {
+            update()
+        }, 60 * 1000)
     }, [])
+
     return (
         <div>
             <Navbar collapseOnSelect expand="lg" bg="light" >
                 <Container>
-                    <Navbar.Brand href="/">HackerNews</Navbar.Brand>
+                    <Navbar.Brand href="/">Hacker News</Navbar.Brand>
                     <Button onClick={update} variant="outline-dark">Refresh</Button>
                 </Container>
             </Navbar>
             <Container>
-                <ArticleCard id={articleId}/>
-
-            {function commentsOrder() {
-                let order = []
-                function dfs(node, depth) {
-                    if (!node) return
-                    for (let i = 0; i < node.length; i++) {
-                        order.push(<Comment id={node[i]} depth={depth} />)
-                        if (expandedComments.includes(node[i])) {
-                            dfs(comments[node[i]], depth + 1)
-                        }
-                    }
-                }
-                dfs(comments[articleId], 0)
-                return order
-            }()}
-
+                <ArticleCard id={articleId} />
+                {comments.map((element) => {
+                    console.log("Root comment updated")
+                    return <Comment key={element} id={element} />
+                })}
 
             </Container>
-            
         </div>
     )
 }
