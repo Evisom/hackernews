@@ -17,7 +17,7 @@ export default function App(props) {
     fetch('https://hacker-news.firebaseio.com/v0/newstories.json')
       .then(response => response.json()).then(data => {
         if (data[0] != articles[0]) {
-          dispatch(updateArticles({ articleID: data.slice(-10) }))
+          dispatch(updateArticles({ articleID: data.slice(-100) }))
         }
       })
   }

@@ -26,9 +26,7 @@ export default function AricleCard(props) {
                 <Card.Title href="#">{articleData.title}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">By {articleData.by}</Card.Subtitle>
                 <Card.Subtitle className="mb-2 text-muted">Score: {articleData.score}</Card.Subtitle>
-                <Card.Text>
-                    {articleData.text}
-                </Card.Text>
+                <Card.Text dangerouslySetInnerHTML={{ __html: articleData.text }}></Card.Text>
                 <Stack direction="horizontal" gap={3}>
 
                     {Object.keys(articleData).includes('url') ? (

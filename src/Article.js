@@ -6,6 +6,7 @@ import ArticleCard from './components/ArticleCard'
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 
 export default function Article() {
 
@@ -41,11 +42,16 @@ export default function Article() {
                 </Container>
             </Navbar>
             <Container>
-                <ArticleCard id={articleId} />
+                <ArticleCard id={articleId} />                
+                
                 {comments.map((element) => {
                     console.log("Root comment updated")
                     return <Comment key={element} id={element} />
                 })}
+                {comments.length === 0 ? (
+                    <Alert style={{marginTop: '24px'}} key='secondary' variant='secondary'>There are no comments yet...</Alert>
+                ):
+                (null)}
 
             </Container>
         </div>
